@@ -1,1 +1,9 @@
 # this will be our model file
+
+# TO-DO:
+# K-NEAREST-NEIHBOURS
+# SUPPORT VECTOR MACHINE
+# DECISION TREE
+# NEURAL NETWORK
+# NAIVE BAYES
+

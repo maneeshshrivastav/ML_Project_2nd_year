@@ -1,0 +1,113 @@
+
+import pandas as pd
+
+import numpy as np
+
+import re
+
+# nltk → Natural Language Toolkit (for text processing)
+import nltk
+
+# stopwords → common words like "the", "is", "and" (not useful for ML)
+from nltk.corpus import stopwords
+
+# WordNetLemmatizer → converts words to base form (running → run)
+from nltk.stem import WordNetLemmatizer
+
+# TfidfVectorizer → converts text into numerical features
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+# LabelEncoder → converts labels (text) into numbers
+from sklearn.preprocessing import LabelEncoder
+
+
+# downloads stopwords dataset (only needed once)
+nltk.download('stopwords')
+
+# downloads word dictionary for lemmatization
+nltk.download('wordnet')
+
+
+# read CSV file into a DataFrame (table format)
+df = pd.read_csv("train_emotion.csv")
+
+# print first 5 rows to understand the dataset
+print(df.head())
+
+# print column names (very important to avoid errors)
+print("\nColumns:", df.columns)
+
+
+# 'text' column → input (features)
+texts = df['text']
+
+# 'emotion' column → output (labels)
+labels = df['emotion']
+
+
+# load English stopwords into a set for fast lookup
+stop_words = set(stopwords.words('english'))
+
+
+# keep important negations
+stop_words.remove('not')
+stop_words.remove('no')
+
+# create lemmatizer object
+lemmatizer = WordNetLemmatizer()
+
+
+def clean_text(text):
+    # expand contractions (don't -> do not)
+    import contractions
+
+    text = contractions.fix(text)
+    
+    # lowercase
+    text = text.lower()
+
+    # remove punctuation
+    text = re.sub(r'[^a-zA-Z\s]', '', text)
+
+    words = text.split()
+
+    # remove stopwords but keep negation
+    words = [lemmatizer.lemmatize(word) for word in words if word not in stop_words]
+
+    return " ".join(words)
+
+
+# apply cleaning function to every row in dataset
+cleaned_texts = texts.apply(clean_text)
+
+# print some cleaned examples
+print("\nSample cleaned text:")
+print(cleaned_texts.head())
+
+
+# create TF-IDF vectorizer
+# max_features=5000 → keep top 5000 important words
+vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2))
+
+# learn vocabulary + transform text into numeric matrix
+X = vectorizer.fit_transform(cleaned_texts)
+
+# print shape of matrix (rows = samples, columns = features)
+print("\nTF-IDF shape:", X.shape)
+
+
+# create label encoder
+label_encoder = LabelEncoder()
+
+# convert emotion labels into numbers
+# example: sadness → 0, happiness → 1, etc.
+y = label_encoder.fit_transform(labels)
+
+# print all classes
+print("\nClasses:", label_encoder.classes_)
+
+
+print("\nFinal processed data:")
+print("X shape:", X.shape)   # feature matrix
+print("y shape:", y.shape)   # labels
+

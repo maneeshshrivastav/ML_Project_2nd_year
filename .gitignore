@@ -1,0 +1,19 @@
+# Virtual environment
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# NLTK downloaded data (better to re-download dataset on setup)
+nltk_data/
+
+# Model files
+*.pkl
+*.joblib
+
+# IDE files
+.vscode/
+
+# professor's project description
+emo_project_544_s26.docx.pdf

@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import re # regex
+import contractions
 import nltk # Natural Language Toolkit (text processing)
 from nltk.corpus import stopwords # common words: "the", "is", (not useful)
 from nltk.stem import WordNetLemmatizer # converts words to base form
@@ -30,11 +31,8 @@ texts = df['text'] # input text
 labels = df['emotion'] # output labels
 
 def clean_text(text): # cleans input sentences
-     # expand contractions (don't -> do not)
-    import contractions
 
-    text = contractions.fix(text)
-    
+    text = contractions.fix(text) # expand word contractions
     text = text.lower() # make all chars lowercase
     text = re.sub(r'[^a-zA-Z\s]', '', text) # remove non-alphabetical chars
     words = text.split() # partition sentence into words

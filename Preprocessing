@@ -58,7 +58,9 @@ lemmatizer = WordNetLemmatizer()
 
 
 def clean_text(text):
+    # expand contractions (don't -> do not)
     import contractions
+
     text = contractions.fix(text)
     
     # lowercase
@@ -85,7 +87,7 @@ print(cleaned_texts.head())
 
 # create TF-IDF vectorizer
 # max_features=5000 → keep top 5000 important words
-vectorizer = TfidfVectorizer(max_features=5000)
+vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2))
 
 # learn vocabulary + transform text into numeric matrix
 X = vectorizer.fit_transform(cleaned_texts)

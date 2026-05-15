@@ -1,7 +1,3 @@
-# =========================
-# 1. IMPORT LIBRARIES
-# =========================
-
 
 import pandas as pd
 
@@ -25,13 +21,11 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import LabelEncoder
 
 
-
 # downloads stopwords dataset (only needed once)
 nltk.download('stopwords')
 
 # downloads word dictionary for lemmatization
 nltk.download('wordnet')
-
 
 
 # read CSV file into a DataFrame (table format)
@@ -44,7 +38,6 @@ print(df.head())
 print("\nColumns:", df.columns)
 
 
-
 # 'text' column → input (features)
 texts = df['text']
 
@@ -55,33 +48,31 @@ labels = df['emotion']
 # load English stopwords into a set for fast lookup
 stop_words = set(stopwords.words('english'))
 
+
+# keep important negations
+stop_words.remove('not')
+stop_words.remove('no')
+
 # create lemmatizer object
 lemmatizer = WordNetLemmatizer()
 
 
-
 def clean_text(text):
-    """
-    This function takes a sentence and cleans it step by step
-    """
-
-    # convert all characters to lowercase (e.g., "Happy" → "happy")
+    import contractions
+    text = contractions.fix(text)
+    
+    # lowercase
     text = text.lower()
-    
-    # remove punctuation and numbers (keep only letters)
-    # example: "hello!!! 123" → "hello"
-    text = re.sub(r'[^a-zA-Z\s]', '', text)
-    
-    # split sentence into words (tokenization)
-    words = text.split()
-    
-    # remove stopwords + apply lemmatization
-    # example: ["running", "the"] → ["run"]
-    words = [lemmatizer.lemmatize(word) for word in words if word not in stop_words]
-    
-    # join words back into a cleaned sentence
-    return " ".join(words)
 
+    # remove punctuation
+    text = re.sub(r'[^a-zA-Z\s]', '', text)
+
+    words = text.split()
+
+    # remove stopwords but keep negation
+    words = [lemmatizer.lemmatize(word) for word in words if word not in stop_words]
+
+    return " ".join(words)
 
 
 # apply cleaning function to every row in dataset
@@ -117,3 +108,4 @@ print("\nClasses:", label_encoder.classes_)
 print("\nFinal processed data:")
 print("X shape:", X.shape)   # feature matrix
 print("y shape:", y.shape)   # labels
+

@@ -15,41 +15,38 @@ def get_nltk_data(): # retrieves stop-words and base forms
         nltk.data.find('corpora/stopwords')
     except LookupError:
         nltk.download('stopwords', download_dir='./nltk_data') # download stop-words dictionary
-    stop_words = set(stopwords.words('english')) # load stop-words
 
     try:
         nltk.data.find('corpora/wordnet.zip')
     except LookupError:
         nltk.download('wordnet', download_dir='./nltk_data') # download base-words dictionary
 
-    return stop_words
+    return set(stopwords.words('english')), WordNetLemmatizer()
 
-def csv_to_dataframe(stop_words, csv_file='train_emotion.csv'):
-    # -----------------------------
-    # TRANSFORM CSV INTO DATAFRAME
-    # -----------------------------
-    df = pd.read_csv(csv_file) # put .csv in a dataframe
+def clean_text(text, stop_words, lemmatizer):
+    text = contractions.fix(str(text))
+    text = text.lower()
+    text = re.sub(r'[^a-zA-Z\s]', '', text)
+    text = text.split(" ")
 
-    # print(df.head())
-    # print("\nColumns:", df.columns)
+    c_text = []
+    for word in text:
+        if word not in stop_words: # lemmatize and remove stop words
+            c_text.append(lemmatizer.lemmatize(word))
 
-    text = df['text'] # input text
-    labels = df['emotion'] # output labels
+    return " ".join(c_text)
 
-    # -----------------------------
-    # CLEAN TEXT COLUMN
-    # -----------------------------
-    lemmatizer = WordNetLemmatizer() # create lemmatizer?
+def csv_to_dataframe(csv_file='train_emotion.csv'):
+    stop_words, lemmatizer = get_nltk_data()
+    df = pd.read_csv(csv_file, names=["text", "emotion"]) # csv to dataframe
+    df["text"] = df["text"].apply(lambda x: clean_text(x, stop_words, lemmatizer)) # clean text column
+    print(df.head())
 
-    # fix contractions, make all lowercase, remove non-alphabetical chars, split
-    text = re.sub(r'[^a-zA-Z\s]', '', contractions.fix(text).lower()).split()
+    df.to_csv("preprocessed.csv", index=False)
+
+    text = df['text'] # text column handle
+    labels = df['emotion'] # label column handle
     
-    # remove stopwords and apply lemmatization
-    words = [lemmatizer.lemmatize(word) for word in text if word not in stop_words]
-    text = " ".join(words) # rejoin words into sentence
-    # print dataset
-    print("\nSample of cleaned text:")
-    print(words.head())
 
     # -----------------------------
     # VECTORIZE DATA
@@ -71,3 +68,6 @@ def csv_to_dataframe(stop_words, csv_file='train_emotion.csv'):
     print("Labels:", y.shape)
 
     return x, y
+
+if __name__ == "__main__":
+    csv_to_dataframe()

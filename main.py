@@ -10,7 +10,8 @@ from model import models
 try: # load preprocessed dataset
     df = pd.read_csv("preprocessed.csv")
     # create TF-IDF vectorizer and keep top 5000 important words
-    vectorizer = TfidfVectorizer(max_features=5000)
+    vectorizer = TfidfVectorizer(max_features=5000,
+    ngram_range=(1,2))
     label_encoder = LabelEncoder() # create encoder
         
     # learn vocabulary + transform text into numeric matrix

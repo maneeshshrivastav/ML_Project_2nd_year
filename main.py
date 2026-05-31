@@ -19,6 +19,7 @@ def train_test(train_csv, test_csv):
         text = str(text)
         text = text.lower()
         text = re.sub(r'[^a-zA-Z\s]', '', text)
+        text = " ".join(text.split())
         return text
 
     # load train and test files
@@ -30,7 +31,7 @@ def train_test(train_csv, test_csv):
     test_df["text"] = test_df["text"].apply(simple_clean)
 
     # TF-IDF with unigrams + bigrams
-    vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1,2))
+    vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1,2), stop_words="english")
     label_encoder = LabelEncoder()
 
     x_train = vectorizer.fit_transform(train_df["text"])
@@ -119,4 +120,4 @@ for name, model in models.items():
         plt.title("SVM Confusion Matrix")
         plt.show()
 
-train_test("train_emotion.csv", "sample_test.csv")
+#train_test("train_emotion.csv", "sample_test.csv")

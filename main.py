@@ -13,7 +13,7 @@ from sklearn.metrics import ConfusionMatrixDisplay # confusion matrix visualizat
 import matplotlib.pyplot as plt # plotting
 # TO-DO: TRAIN / TEST, CROSS-VALIDATION, ENSEMBLE
 
-def train_test(train_csv, test_csv):
+def train_test(train_csv="train_emotion.csv", test_csv="test.csv"):
     # simple text cleaner without NLTK downloads
     def simple_clean(text):
         text = str(text)
@@ -120,4 +120,4 @@ for name, model in models.items():
         plt.title("SVM Confusion Matrix")
         plt.show()
 
-#train_test("train_emotion.csv", "sample_test.csv")
+train_test()

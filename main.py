@@ -53,27 +53,28 @@ def train_test(train_csv="train_emotion.csv", test_csv="test.csv"):
     predicted_labels = label_encoder.inverse_transform(predictions)
 
     # write predictions
-    with open("predictions.txt", "w") as file:
+    with open("test_files/predictions.txt", "w") as file:
         for label in predicted_labels:
             file.write(str(label) + "\n")
 
 # ------------------------------------------------------------
 
     try: # load preprocessed dataset
-        df = pd.read_csv("preprocessed.csv")
-        # create TF-IDF vectorizer and keep top 5000 important words
-        vectorizer = TfidfVectorizer(max_features=5000,
-        ngram_range=(1,2))
-        label_encoder = LabelEncoder() # create encoder
-            
-        # learn vocabulary + transform text into numeric matrix
-        x = vectorizer.fit_transform(df['text'])
-        # encode emotion labels into numbers i.e sadness = 0, ...
-        y = label_encoder.fit_transform(df['emotion'])
+        df = pd.read_csv("test_files/preprocessed.csv")
     except FileNotFoundError:
         print("Preprocessed data not found.")
         print("Preprocessing data now.")
-        x, y = csv_to_dataframe()
+        csv_to_dataframe()
+        df = pd.read_csv("test_files/preprocessed.csv")
+    # create TF-IDF vectorizer and keep top 5000 important words
+    vectorizer = TfidfVectorizer(max_features=5000,
+    ngram_range=(1,2))
+    label_encoder = LabelEncoder() # create encoder
+        
+    # learn vocabulary + transform text into numeric matrix
+    x = vectorizer.fit_transform(df['text'])
+    # encode emotion labels into numbers i.e sadness = 0, ...
+    y = label_encoder.fit_transform(df['emotion'])
 
     # Split data into training and test sets
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42, stratify=y)
@@ -87,9 +88,9 @@ def train_test(train_csv="train_emotion.csv", test_csv="test.csv"):
             y_pred = model.predict(x_test)
             accuracy = accuracy_score(y_test, y_pred)
 
-            file.write(f"\n{'=' * 15} {name} {'=' * 15}")
-            file.write(f"Accuracy: {accuracy:.4f}")
-            file.write("\nClassification Report:")
+            file.write(f"\n{'=' * 15} {name} {'=' * 15}\n")
+            file.write(f"Accuracy: {accuracy:.4f}\n")
+            file.write("Classification Report:\n")
             file.write(classification_report(y_test, y_pred))
             
             # run additional evaluation for the best model (SVM)

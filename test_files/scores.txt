@@ -1,6 +1,8 @@
 
-=============== kNN ===============Accuracy: 0.7188
-Classification Report:              precision    recall  f1-score   support
+=============== kNN ===============
+Accuracy: 0.7188
+Classification Report:
+              precision    recall  f1-score   support
 
            0       0.59      0.67      0.63       231
            1       0.69      0.70      0.70       294
@@ -14,8 +16,10 @@ Classification Report:              precision    recall  f1-score   support
    macro avg       0.73      0.71      0.71      1600
 weighted avg       0.73      0.72      0.72      1600
 
-=============== Decision Tree ===============Accuracy: 0.8363
-Classification Report:              precision    recall  f1-score   support
+=============== Decision Tree ===============
+Accuracy: 0.8363
+Classification Report:
+              precision    recall  f1-score   support
 
            0       0.69      0.77      0.73       231
            1       0.91      0.89      0.90       294
@@ -29,8 +33,10 @@ Classification Report:              precision    recall  f1-score   support
    macro avg       0.83      0.83      0.83      1600
 weighted avg       0.84      0.84      0.84      1600
 
-=============== Neural Network ===============Accuracy: 0.8831
-Classification Report:              precision    recall  f1-score   support
+=============== Neural Network ===============
+Accuracy: 0.8831
+Classification Report:
+              precision    recall  f1-score   support
 
            0       0.86      0.85      0.85       231
            1       0.89      0.90      0.90       294
@@ -44,8 +50,10 @@ Classification Report:              precision    recall  f1-score   support
    macro avg       0.88      0.87      0.88      1600
 weighted avg       0.88      0.88      0.88      1600
 
-=============== Naive Bayes ===============Accuracy: 0.8263
-Classification Report:              precision    recall  f1-score   support
+=============== Naive Bayes ===============
+Accuracy: 0.8263
+Classification Report:
+              precision    recall  f1-score   support
 
            0       0.84      0.69      0.76       231
            1       0.70      0.97      0.81       294
@@ -59,8 +67,10 @@ Classification Report:              precision    recall  f1-score   support
    macro avg       0.85      0.79      0.80      1600
 weighted avg       0.84      0.83      0.82      1600
 
-=============== SVM ===============Accuracy: 0.9056
-Classification Report:              precision    recall  f1-score   support
+=============== SVM ===============
+Accuracy: 0.9056
+Classification Report:
+              precision    recall  f1-score   support
 
            0       0.90      0.89      0.89       231
            1       0.94      0.93      0.93       294

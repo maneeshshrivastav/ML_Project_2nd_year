@@ -9,6 +9,7 @@ pip install -r requirements.txt
 
 # Place your 'test.csv' file inside the ROOT project directory.
 # Run 'main.py'
+# (FOR PROFESSOR) Sir, you can find predictions.txt in the 'test_files' directory
 # ------------------------------------------------------------------
 
 # USEFUL GITHUB COMMANDS (for developers, not professor)

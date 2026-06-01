@@ -5,13 +5,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer # converts text into
 from sklearn.preprocessing import LabelEncoder # converts labels into numbers
 from sklearn.model_selection import train_test_split # Evaluation
 from sklearn.metrics import accuracy_score, classification_report
-from preprocessing import csv_to_dataframe, get_nltk_data, clean_text
-from model import models
+from scripts.preprocessing import csv_to_dataframe, get_nltk_data, clean_text
+from scripts.models import models
 from sklearn.model_selection import cross_val_score # cross-validation
 from sklearn.metrics import confusion_matrix # confusion matrix
 from sklearn.metrics import ConfusionMatrixDisplay # confusion matrix visualization
 import matplotlib.pyplot as plt # plotting
-# TO-DO: TRAIN / TEST, CROSS-VALIDATION, ENSEMBLE
 
 def train_test(train_csv="train_emotion.csv", test_csv="test.csv"):
     # simple text cleaner without NLTK downloads
@@ -29,7 +28,7 @@ def train_test(train_csv="train_emotion.csv", test_csv="test.csv"):
         test_df = pd.read_csv(test_csv, names=["text"])
     except FileNotFoundError:
         print("\n\n\n==========================================================================================")
-        print("FileNotFoundError: Please, place your 'test.csv' file in the project's root directory.")
+        print("FileNotFoundError: Please, place your 'test.csv' file inside the project's root directory.")
         print("==========================================================================================\n")
         exit()
 
@@ -58,73 +57,76 @@ def train_test(train_csv="train_emotion.csv", test_csv="test.csv"):
         for label in predicted_labels:
             file.write(str(label) + "\n")
 
-try: # load preprocessed dataset
-    df = pd.read_csv("preprocessed.csv")
-    # create TF-IDF vectorizer and keep top 5000 important words
-    vectorizer = TfidfVectorizer(max_features=5000,
-    ngram_range=(1,2))
-    label_encoder = LabelEncoder() # create encoder
-        
-    # learn vocabulary + transform text into numeric matrix
-    x = vectorizer.fit_transform(df['text'])
-    # encode emotion labels into numbers i.e sadness = 0, ...
-    y = label_encoder.fit_transform(df['emotion'])
-except FileNotFoundError:
-    x, y = csv_to_dataframe()
+# ------------------------------------------------------------
 
-# Split data into training and test sets
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42, stratify=y)
+    try: # load preprocessed dataset
+        df = pd.read_csv("preprocessed.csv")
+        # create TF-IDF vectorizer and keep top 5000 important words
+        vectorizer = TfidfVectorizer(max_features=5000,
+        ngram_range=(1,2))
+        label_encoder = LabelEncoder() # create encoder
+            
+        # learn vocabulary + transform text into numeric matrix
+        x = vectorizer.fit_transform(df['text'])
+        # encode emotion labels into numbers i.e sadness = 0, ...
+        y = label_encoder.fit_transform(df['emotion'])
+    except FileNotFoundError:
+        print("Preprocessed data not found.")
+        print("Preprocessing data now.")
+        x, y = csv_to_dataframe()
 
-# train and evaluate models
-for name, model in models.items():
+    # Split data into training and test sets
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42, stratify=y)
 
-    print(f"\n{'=' * 15} {name} {'=' * 15}")
+    # write scores
+    with open("test_files/scores.txt", "w") as file:
 
-    # Train model
-    model.fit(x_train, y_train)
+        for name, model in models.items():
 
-    # Predict labels
-    y_pred = model.predict(x_test)
+            model.fit(x_train, y_train)
+            y_pred = model.predict(x_test)
+            accuracy = accuracy_score(y_test, y_pred)
 
-    
-    
+            file.write(f"\n{'=' * 15} {name} {'=' * 15}")
+            file.write(f"Accuracy: {accuracy:.4f}")
+            file.write("\nClassification Report:")
+            file.write(classification_report(y_test, y_pred))
+            
+            # run additional evaluation for the best model (SVM)
+            if name == "SVM":
 
-    # Compute accuracy
-    accuracy = accuracy_score(y_test, y_pred)
+                # evaluate SVM using 5-fold cross-validation
+                scores = cross_val_score(
+                    model,
+                    x,
+                    y,
+                    cv=5,
+                    scoring='accuracy'
+                )
 
-    print(f"Accuracy: {accuracy:.4f}")
-    print("\nClassification Report:")
-    print(classification_report(y_test, y_pred))
-    # run additional evaluation only for the best model (SVM)
-    if name == "SVM":
+                # print fold accuracies and average accuracy
+                print("\n===== SVM 5-Fold Cross Validation =====")
+                print("Fold Scores:", scores)
+                print("Mean Accuracy:", scores.mean())
+                print("Standard Deviation:", scores.std())
 
-        # evaluate SVM using 5-fold cross-validation
-        scores = cross_val_score(
-            model,
-            x,
-            y,
-            cv=5,
-            scoring='accuracy'
-        )
+                # create confusion matrix for SVM predictions
+                cm = confusion_matrix(y_test, y_pred)
 
-        # print fold accuracies and average accuracy
-        print("\n===== SVM 5-Fold Cross Validation =====")
-        print("Fold Scores:", scores)
-        print("Mean Accuracy:", scores.mean())
-        print("Standard Deviation:", scores.std())
+                # display confusion matrix
+                disp = ConfusionMatrixDisplay(
+                    confusion_matrix=cm,
+                    display_labels=label_encoder.classes_
+                )
 
-        # create confusion matrix for SVM predictions
-        cm = confusion_matrix(y_test, y_pred)
+                # plot confusion matrix
+                disp.plot(cmap="Blues")
+                plt.title("SVM Confusion Matrix")
+                plt.show()
 
-        # display confusion matrix
-        disp = ConfusionMatrixDisplay(
-            confusion_matrix=cm,
-            display_labels=label_encoder.classes_
-        )
+if __name__ == "__main__":
+    train_test()
 
-        # plot confusion matrix
-        disp.plot(cmap="Blues")
-        plt.title("SVM Confusion Matrix")
-        plt.show()
 
-train_test()
+
+

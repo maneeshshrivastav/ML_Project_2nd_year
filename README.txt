@@ -1,12 +1,17 @@
-# SETUP ENVIRONMENT
+# HOW TO USE PROJECT SETUP ENVIRONMENT
 
-# once you set your working directory to the project folder,
-# run the following command, to get all dependencies:
+# set your working directory to the ROOT project directory,
+# run the following, to set/activate your virtual environment, and get all dependencies:
+
+python -m venv venv
+.\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 
+# Place your 'test.csv' file inside the ROOT project directory.
+# Run 'main.py'
 # ------------------------------------------------------------------
 
-# USEFUL GITHUB COMMANDS
+# USEFUL GITHUB COMMANDS (for developers, not professor)
 
 # update local repo with remote (DO THIS BEFORE YOU START MAKING CHANGING):
 git pull origin main

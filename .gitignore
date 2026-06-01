@@ -24,3 +24,5 @@ access_token.txt
 # test files
 predictions.txt
 sample_test.csv
+test.csv
+preprocessed.csv

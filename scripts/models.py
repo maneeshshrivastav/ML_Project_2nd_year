@@ -9,8 +9,8 @@ from sklearn.naive_bayes import MultinomialNB as bayes
 # model dict
 models = {
     "kNN": kNN(n_neighbors=5),
-    "SVM": svm(random_state=42),
     "Decision Tree": tree(random_state=42),
     "Neural Network": neuron(hidden_layer_sizes=(32,), max_iter=50, early_stopping=True, random_state=42), # Multi-Layer Perceptron
-    "Naive Bayes": bayes()
+    "Naive Bayes": bayes(),
+    "SVM": svm(random_state=42)
 }

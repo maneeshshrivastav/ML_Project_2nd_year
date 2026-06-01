@@ -38,7 +38,7 @@ def csv_to_dataframe(csv_file='train_emotion.csv'):
     stop_words, lemmatizer = get_nltk_data()
     df = pd.read_csv(csv_file, names=["text", "emotion"]) # csv to dataframe
     df["text"] = df["text"].apply(lambda x: clean_text(x, stop_words, lemmatizer)) # clean text column
-    df.to_csv("preprocessed.csv", index=False)
+    df.to_csv("test_files/preprocessed.csv", index=False)
 
 if __name__ == "__main__":
     csv_to_dataframe()

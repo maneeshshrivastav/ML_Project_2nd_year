@@ -24,7 +24,14 @@ def train_test(train_csv="train_emotion.csv", test_csv="test.csv"):
 
     # load train and test files
     train_df = pd.read_csv(train_csv, names=["text", "emotion"])
-    test_df = pd.read_csv(test_csv, names=["text"])
+    
+    try:
+        test_df = pd.read_csv(test_csv, names=["text"])
+    except FileNotFoundError:
+        print("\n\n\n==========================================================================================")
+        print("FileNotFoundError: Please, place your 'test.csv' file in the project's root directory.")
+        print("==========================================================================================\n")
+        exit()
 
     # clean text
     train_df["text"] = train_df["text"].apply(simple_clean)
